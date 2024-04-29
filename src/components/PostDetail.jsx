@@ -1,5 +1,4 @@
-// src/components/PostDetail.jsx
-import React from 'react';
+import React from "react";
 
 const PostDetail = ({ post }) => {
   if (!post) return <div>Caricamento...</div>;

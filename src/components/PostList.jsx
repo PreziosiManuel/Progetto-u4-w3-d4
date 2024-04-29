@@ -18,7 +18,7 @@ const PostList = () => {
       .then((data) => {
         setPosts(data);
       })
-      .then(undefined, (error) => {
+      .catch((error) => {
         console.error(error);
       });
   };
@@ -31,20 +31,49 @@ const PostList = () => {
     ? posts.filter((post) => post.title.rendered.toLowerCase().includes(searchTerm.toLowerCase()))
     : posts;
 
+  const deletePost = (postId) => {
+    const username = "asdf";
+    const password = "kGo2aVuLgNZOozrmIZHZGg1B";
+    const credentials = window.btoa(`${username}:${password}`);
+
+    fetch(`http://localhost/E-Commerce/wp-json/wp/v2/posts/${postId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${credentials}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Errore durante l'eliminazione del post");
+        }
+        return response.json();
+      })
+      .then(() => {
+        setPosts(posts.filter((post) => post.id !== postId));
+      })
+      .catch((error) => {
+        console.error("Errore durante l'eliminazione del post:", error);
+      });
+  };
+
   return (
     <div>
       <h1>Post List</h1>
       <input type="text" placeholder="Cerca post..." onChange={(e) => setSearchTerm(e.target.value)} />
       {selectedPost ? (
         <div>
-          <button onClick={() => setSelectedPost(null)}>Back to Posts</button>
+          <button onClick={() => setSelectedPost(null)}>Torna ai post</button>
           <PostDetail post={selectedPost} />
         </div>
       ) : (
         <div className="d-flex flex-wrap">
           {filteredPosts.map((post) => (
-            <div key={post.id} onClick={() => setSelectedPost(post)}>
+            <div key={post.id}>
               <Post post={post} />
+              <button variant="danger" onClick={() => deletePost(post.id)}>
+                Elimina
+              </button>
             </div>
           ))}
         </div>
