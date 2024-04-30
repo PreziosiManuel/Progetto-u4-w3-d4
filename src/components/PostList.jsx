@@ -47,9 +47,6 @@ const PostList = () => {
         if (!response.ok) {
           throw new Error("Errore durante l'eliminazione del post");
         }
-        return response.json();
-      })
-      .then(() => {
         setPosts(posts.filter((post) => post.id !== postId));
       })
       .catch((error) => {
@@ -70,10 +67,13 @@ const PostList = () => {
         <div className="d-flex flex-wrap">
           {filteredPosts.map((post) => (
             <div key={post.id}>
-              <Post post={post} />
-              <button variant="danger" onClick={() => deletePost(post.id)}>
-                Elimina
-              </button>
+              <Post
+                post={post}
+                onDelete={() => {
+                  deletePost(post.id);
+                  fetchPosts();
+                }}
+              />
             </div>
           ))}
         </div>
