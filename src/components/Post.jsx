@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Container } from "react-bootstrap";
 import DeleteButton from "./DeleteButton";
 
 const Post = ({ post, fetchPosts }) => {
@@ -23,16 +23,18 @@ const Post = ({ post, fetchPosts }) => {
   };
 
   return (
-    <Card style={{ width: "18rem" }}>
-      <Card.Body>
-        <Card.Title dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-        <Card.Text as="div" dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
-        <Button variant="primary" href={post.link} target="_blank">
-          Modifica
-        </Button>
-        <DeleteButton onDelete={handleDelete} />
-      </Card.Body>
-    </Card>
+    <Container>
+      <Card className="my-4 mx-2" style={{ width: "18rem" }}>
+        <Card.Body>
+          <Card.Title dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+          <Card.Text as="div" dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
+          <Button className="me-2" variant="primary" href={post.link} target="_blank">
+            <i className="bi bi-pencil-square"></i> Modifica
+          </Button>
+          <DeleteButton onDelete={handleDelete} />
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

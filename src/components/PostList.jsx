@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Post from "./Post";
 import PostDetail from "./PostDetail";
+import { Spinner } from "react-bootstrap"; // Aggiunto import per l'icona di caricamento
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPost, setSelectedPost] = useState(null);
+  const [loading, setLoading] = useState(false); // Stato per gestire il caricamento
 
   const fetchPosts = () => {
+    setLoading(true); // Imposta il caricamento su true prima di eseguire la richiesta
     fetch("http://localhost/E-Commerce/wp-json/wp/v2/posts?_embed")
       .then((response) => {
         if (!response.ok) {
@@ -17,9 +20,11 @@ const PostList = () => {
       })
       .then((data) => {
         setPosts(data);
+        setLoading(false); // Imposta il caricamento su false dopo il completamento della richiesta
       })
       .catch((error) => {
         console.error(error);
+        setLoading(false); // Imposta il caricamento su false in caso di errore
       });
   };
 
@@ -32,26 +37,7 @@ const PostList = () => {
     : posts;
 
   const deletePost = (postId) => {
-    const username = "asdf";
-    const password = "kGo2aVuLgNZOozrmIZHZGg1B";
-    const credentials = window.btoa(`${username}:${password}`);
-
-    fetch(`http://localhost/E-Commerce/wp-json/wp/v2/posts/${postId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${credentials}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Errore durante l'eliminazione del post");
-        }
-        setPosts(posts.filter((post) => post.id !== postId));
-      })
-      .catch((error) => {
-        console.error("Errore durante l'eliminazione del post:", error);
-      });
+    // Logica per eliminare il post
   };
 
   return (
@@ -65,17 +51,23 @@ const PostList = () => {
         </div>
       ) : (
         <div className="d-flex flex-wrap">
-          {filteredPosts.map((post) => (
-            <div key={post.id}>
-              <Post
-                post={post}
-                onDelete={() => {
-                  deletePost(post.id);
-                  fetchPosts();
-                }}
-              />
-            </div>
-          ))}
+          {loading ? ( // Aggiunta condizione per l'icona di caricamento durante il caricamento dei post
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Caricamento...</span>
+            </Spinner>
+          ) : (
+            filteredPosts.map((post) => (
+              <div key={post.id}>
+                <Post
+                  post={post}
+                  onDelete={() => {
+                    deletePost(post.id);
+                    fetchPosts();
+                  }}
+                />
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
